@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        {% if title %}
+            {{title}}
+        {% else %}
+            Box
+        {% endif %}
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- MaterializeCSS CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+    {% block style %}{% endblock %}
+            
+</head>
+<body>
+        <main role="main" class="container">
+                <div class="row">
+                    <div class="col m2"></div>
+                    <div class="col m8">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <ul class="collection ">
+                                        <li class="collection-item {{category}}">{{ message }}</li>
+                                    </ul>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        {% block content %}{% endblock %}
+                    </div>
+                    <div class="col m2"></div>
+                </div>
+            </main>
+    {% block script %}{% endblock %}
+    <!-- jQuery JS -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+    <!-- MaterializeCSS JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+</body>
+</html>

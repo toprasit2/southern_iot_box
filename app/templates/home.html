@@ -1,0 +1,7 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>This page is Home</h1>
+    {% if current_user.is_authenticated %}
+    Hi {{ current_user.username }}! <a class="btn red lighten-2" href="{{ url_for('logout') }}">Logout</a>
+    {% endif %}
+{% endblock %}

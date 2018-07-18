@@ -1,0 +1,197 @@
+{% extends "layout.html" %}
+{% block style %}
+<style>
+    .wrapper {
+        position: relative;
+        width: 100%;
+        height: 100px;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-color: rgb(180, 180, 180, 0.3)
+    }
+
+    .signature-pad {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width:100%;
+        height:100px;
+        background-color: rgb(180, 180, 180, 0.3)
+    }
+    .hide{
+        display: none
+    }
+</style>
+{% endblock %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }} <!-- addCSRF TOKEN -->
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Join Today</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback red-text">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback red-text">
+                            {% for error in form.email.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback red-text">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.confirm_password.label(class="form-control-label") }}
+                    {% if form.confirm_password.errors %}
+                        {{ form.confirm_password(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback red-text">
+                            {% for error in form.confirm_password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.confirm_password(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                Sign your signature:
+                <div class="wrapper">
+                    <canvas id="signature-pad" class="signature-pad"></canvas>
+                </div>
+                <a class="btn" id="sent">Confirm</a>
+                <a class="btn" id="clear">Clear</a>
+                {{ form.signature(class="form-control form-control-lg hide", id="signature") }}
+            </fieldset>
+            <div class="form-group center" style="margin-top: 20px">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+            <div id="adder">
+
+            </div>
+        </form>
+    </div>
+    <div class="border-top pt-3 center">
+    <small class="text-muted">
+        Already Have An Account? <a class="ml-2" href="">Sign In</a>
+    </small>
+</div>
+{% endblock %}
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+<script>
+        // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyCk9qv1iJZp16IXL5Uit6oJL0l39P2WwTE",
+        authDomain: "southern-iot-box.firebaseapp.com",
+        databaseURL: "https://southern-iot-box.firebaseio.com",
+        projectId: "southern-iot-box",
+        storageBucket: "southern-iot-box.appspot.com",
+        messagingSenderId: "937282602359"
+    };
+    firebase.initializeApp(config);
+</script>
+    <script>
+    var canvas = document.getElementById('signature-pad');
+
+    function resizeCanvas() {
+        var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+    }
+
+    function blobToFile(theBlob, fileName){
+        //A Blob() is almost a File() - it's just missing the two properties below which we will add
+        theBlob.lastModifiedDate = new Date();
+        theBlob.name = fileName;
+        return theBlob;
+    }
+
+    function dataURLToBlob(dataURL) {
+        // Code taken from https://github.com/ebidel/filer.js
+        var parts = dataURL.split(';base64,');
+        var contentType = parts[0].split(":")[1];
+        var raw = window.atob(parts[1]);
+        var rawLength = raw.length;
+        var uInt8Array = new Uint8Array(rawLength);
+
+        for (var i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+
+        var img =  new Blob([uInt8Array], { type: contentType });
+        return img
+        
+    }
+
+    function download(dataURL, filename) {
+        var blob = dataURLToBlob(dataURL);
+        var url = window.URL.createObjectURL(blob);
+        //console.log(url)
+        var file = blobToFile(blob, filename)
+        setTimeout(function(){
+            var file = blobToFile(blob, filename)
+        },10000)
+        var storageRef = firebase.storage().ref(file.name);
+        storageRef.put(file);
+        var thumbnail = "https://firebasestorage.googleapis.com/v0/b/"+config["storageBucket"]+"/o/"+file.name+"?alt=media";
+        //console.log(thumbnail)
+
+        $('#signature').val(thumbnail)
+        // console.log( $('#signature').val())
+        $('#signature').append('<p>ถูกต้อง</p>')
+        alert("OK !")
+    }
+
+    window.onresize = resizeCanvas;
+    resizeCanvas();
+
+    var signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgb(255, 255, 255)'
+    });
+
+    document.getElementById('sent').addEventListener('click', function () {
+        if (signaturePad.isEmpty()) {
+            return alert("Please provide a signature first.");
+        }
+        var data = signaturePad.toDataURL("image/jpeg");
+            //console.log(data);
+            download(data, $("#username").val()+"signature.jpg");
+    });
+
+    document.getElementById('clear').addEventListener('click', function () {
+        signaturePad.clear();
+    });
+</script>
+{% endblock %}

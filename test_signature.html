@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>signature</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    .wrapper {
+        position: relative;
+        width: 400px;
+        height: 200px;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-color: aquamarine
+    }
+
+    .signature-pad {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width:400px;
+        height:200px;
+        background-color: aquamarine
+    }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <canvas id="signature-pad" class="signature-pad" width=400 height=200></canvas>
+    </div>
+
+    <button id="save-jpeg">Save as JPEG</button>
+    <button id="draw">Draw</button>
+    <button id="erase">Erase</button>
+    <button id="clear">Clear</button>
+
+
+
+<script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+   var config = {
+       apiKey: "AIzaSyBgRf_nvp9sBkIj3DepOoP_9wVsgP1AKPk",
+       authDomain: "register-for-run.firebaseapp.com",
+       databaseURL: "https://register-for-run.firebaseio.com",
+       projectId: "register-for-run",
+       storageBucket: "register-for-run.appspot.com",
+       messagingSenderId: "255779448279"
+   };
+
+    firebase.initializeApp(config);
+    var database = firebase.database();
+ </script>
+<script>
+    var canvas = document.getElementById('signature-pad');
+
+    // Adjust canvas coordinate space taking into account pixel ratio,
+    // to make it look crisp on mobile devices.
+    // This also causes canvas to be cleared.
+    function resizeCanvas() {
+        // When zoomed out to less than 100%, for some very strange reason,
+        // some browsers report devicePixelRatio as less than 1
+        // and only part of the canvas is cleared then.
+        var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+    }
+
+    function blobToFile(theBlob, fileName){
+        //A Blob() is almost a File() - it's just missing the two properties below which we will add
+        theBlob.lastModifiedDate = new Date();
+        theBlob.name = fileName;
+        return theBlob;
+    }
+    function dataURLToBlob(dataURL) {
+        // Code taken from https://github.com/ebidel/filer.js
+        var parts = dataURL.split(';base64,');
+        var contentType = parts[0].split(":")[1];
+        var raw = window.atob(parts[1]);
+        var rawLength = raw.length;
+        var uInt8Array = new Uint8Array(rawLength);
+
+        for (var i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+
+        var img =  new Blob([uInt8Array], { type: contentType });
+        return img
+        
+    }
+
+    function download(dataURL, filename) {
+        var blob = dataURLToBlob(dataURL);
+        var url = window.URL.createObjectURL(blob);
+        console.log(url)
+        var file = blobToFile(blob, filename)
+        setTimeout(function(){
+            var file = blobToFile(blob, filename)
+        },10000)
+        var storageRef = firebase.storage().ref(file.name);
+        storageRef.put(file);
+        var thumbnail = "https://firebasestorage.googleapis.com/v0/b/"+config["storageBucket"]+"/o/"+file.name+"?alt=media";
+        console.log(thumbnail)
+        
+        var a = document.createElement("a");
+        a.style = "display: none";
+        a.href = url;
+        a.download = filename;
+    
+        document.body.appendChild(a);
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+    }
+
+    window.onresize = resizeCanvas;
+    resizeCanvas();
+
+    var signaturePad = new SignaturePad(canvas, {
+    backgroundColor: 'rgb(255, 255, 255)' // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
+    });
+
+    document.getElementById('save-jpeg').addEventListener('click', function () {
+    if (signaturePad.isEmpty()) {
+        return alert("Please provide a signature first.");
+    }
+
+    var data = signaturePad.toDataURL("image/jpeg");
+        console.log(data);
+        download(data, "signature.jpg");
+    });
+
+    document.getElementById('clear').addEventListener('click', function () {
+    signaturePad.clear();
+    });
+
+    document.getElementById('draw').addEventListener('click', function () {
+    var ctx = canvas.getContext('2d');
+    console.log(ctx.globalCompositeOperation);
+    ctx.globalCompositeOperation = 'source-over'; // default value
+    });
+
+    document.getElementById('erase').addEventListener('click', function () {
+    var ctx = canvas.getContext('2d');
+    ctx.globalCompositeOperation = 'destination-out';
+    });
+</script>
+  
+</body>
+
+</html>
