@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h5 class="center">Welcome to Magic Box <a class="modal-trigger" href="#modal5"><i class="small material-icons">info_outline</i></a></h5><hr>
+    <h5 class="center">Welcome to Smart Box <a class="modal-trigger" href="#modal5"><i class="small material-icons">info_outline</i></a></h5><hr>
     {% if current_user.is_authenticated %}
         <div class="row" style="margin-bottom: 50px;padding: 10px 10px 10px 10px">
             <div class="col s9"><span style="font-size: 16px">Hi !<br> {{ current_user.first_name }} {{ current_user.last_name }}</span></div>

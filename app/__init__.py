@@ -30,5 +30,7 @@ app.config['MQTT_KEEPALIVE'] = 5  # set the time interval for sending a ping to 
 app.config['MQTT_TLS_ENABLED'] = False  # set TLS to disabled for testing purposes
 mqtt = Mqtt(app)
 mqtt.subscribe('open_box')
+mqtt.subscribe('is_reserved')
+mqtt.subscribe('is_opened')
 
 from app import routes

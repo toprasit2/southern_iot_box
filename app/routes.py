@@ -156,6 +156,7 @@ def reserve(box_name, number):
                     'password': [1],
                     'message': [1]
                 })
+        mqtt.publish('is_reserved', box_name+" red")
         return redirect(url_for('box', box_name=box_name))
     else:
         return redirect(url_for('box', box_name=box_name))
@@ -226,6 +227,7 @@ def handle_mytopic(client, userdata, message):
 def open(box_name):
     mqtt.publish('open_box', box_name)
     return redirect(url_for('box', box_name=box_name))
+
 import json
 @app.route("/api")
 def api():
