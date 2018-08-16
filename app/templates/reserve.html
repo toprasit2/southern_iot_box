@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+    <p style="font-size: 20px">{{box_name}} <span class="right">ยังไม่ถูกจอง</span></p>
+    <hr>
+    <p style="font-size: 12px">เลือกแพ็กเกจที่คุณต้องการได้ดังนี้</p>
+    <div class="row">
+                <div class="col s9 orange lighten-3" style="height: 80px;">
+                    <p style="font-size: 12px" style="margin: 0 0 0 0">เพลิดเพลินกับการใช้งาน magic box</p>
+                    <span style="font-size: 20px;">1 day / 10 bath</span> 
+                </div>
+                <div class="col s3 orange z-depth-1" style="height: 80px; padding: 0 0 0 0">
+                    <a class="white-text" href="{{url_for('reserve', box_name=box_name, number=1)}}">
+                        <div class="orange waves-effect waves-light" style="height: 80px; width: 100%; padding: 25px 0px 15px 8px;  ">Join Now</div>
+                    </a>
+                </div>
+                <div class="col s9 red lighten-3" style="height: 80px;">
+                    <p style="font-size: 12px" style="margin: 0 0 0 0">เพลิดเพลินกับการใช้งาน magic box</p>
+                    <span style="font-size: 20px;">1 month / 219 bath</span> 
+                </div>
+                <div class="col s3 red z-depth-1" style="height: 80px; padding: 0 0 0 0">
+                    <a class="white-text" href="{{url_for('reserve', box_name=box_name, number=2)}}">
+                        <div class="red waves-effect waves-light" style="height: 80px; width: 100%; padding: 25px 0px 15px 8px; border-radius: 0px 8px 8px 0px;">Join Now</div>
+                    </a>
+                </div>
+                <div class="col s9 pink lighten-3" style="height: 80px;">
+                    <p style="font-size: 12px" style="margin: 0 0 0 0">เพลิดเพลินกับการใช้งาน magic box</p>
+                    <span style="font-size: 20px;">1 year / 999 bath</span> 
+                </div>
+                <div class="col s3 pink z-depth-1" style="height: 80px; padding: 0 0 0 0">
+                    <a class="white-text" href="{{url_for('reserve', box_name=box_name, number=3)}}">
+                        <div class="pink waves-effect waves-light" style="height: 80px; width: 100%; padding: 25px 0px 15px 8px; border-radius: 0px 8px 8px 0px;">Join Now</div>
+                    </a>
+                </div>
+        <a class="btn blue-grey darken-3" style="width: 100%" href="{{ url_for('home') }}">Back</a>
+    </div>
+    
+{% endblock %}

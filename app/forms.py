@@ -5,13 +5,18 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextA
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from app import firebase
 class RegistrationForm(FlaskForm):
-    username = StringField('Name',
+    username = StringField('Username',
                             validators=[DataRequired(),Length(min=2, max=20)])
-    email = StringField('Email',
-                        validators=[DataRequired(),Email()])
+    first_name = StringField('First Name',
+                            validators=[DataRequired(),Length(min=2, max=20)])
+    last_name = StringField('Last Name',
+                            validators=[DataRequired(),Length(min=2, max=20)])                        
+    cellular = StringField('Phone number',
+                        validators=[DataRequired(),Length(min=10, max=10)])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Comfirm Password', 
                                     validators=[DataRequired(), EqualTo('password')])
+
     signature = StringField('Signature', validators=[DataRequired()])
     submit = SubmitField('Register')
 
@@ -21,13 +26,13 @@ class RegistrationForm(FlaskForm):
 
         if username_check == username.data:
             raise ValidationError('That username is taken. Please Choose a different.')
-    def validate_email(self, email):
-        path ='/Users'
-        data = firebase.get(path, None)
-        if data:
-            for key,value in data.items():
-                if email.data == value['email']:
-                    raise ValidationError('That email is taken. Please Choose a different.')
+    # def validate_cellular(self, cellular):
+    #     path ='/Users'
+    #     data = firebase.get(path, None)
+    #     if data:
+    #         for key,value in data.items():
+    #             if cellular.data == value['cellular']:
+    #                 raise ValidationError('That cellular is taken. Please Choose a different.')
 
 class LoginForm(FlaskForm):
     username = StringField('Username',
@@ -35,27 +40,11 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
-class UpdateAccountForm(FlaskForm):
-    username = StringField('Username',
-                            validators=[DataRequired(),Length(min=2, max=20)])
-    email = StringField('Email',
-                        validators=[DataRequired(),Email()])
-    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
-    submit = SubmitField('Update')
 
-    def validate_username(self, username):
-        if username.data != current_user.username:
-            user = User.query.filter_by(username = username.data).first()
-            if user:
-                raise ValidationError('That username is taken. Please Choose a different.')
-    def validate_email(self, email):
-        if email.data != current_user.email:
-            user = User.query.filter_by(email = email.data).first()
-            if user:
-                raise ValidationError('That email is taken. Please Choose a different.')
+class BoxForm(FlaskForm):
+    name = StringField('Box Name', validators=[DataRequired()])
+    submit = SubmitField('Go')
 
-class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    content = TextAreaField('Content', validators=[DataRequired()])
-    submit = SubmitField('Post')
-
+class BoxPasswordForm(FlaskForm):
+    password = StringField('password : รหัสไปรษณีย์', validators=[DataRequired()])
+    submit = SubmitField('Submit')

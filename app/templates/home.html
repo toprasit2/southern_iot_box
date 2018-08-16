@@ -1,7 +1,47 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>This page is Home</h1>
+    <h5 class="center">Welcome to Magic Box <a class="modal-trigger" href="#modal5"><i class="small material-icons">info_outline</i></a></h5><hr>
     {% if current_user.is_authenticated %}
-    Hi {{ current_user.username }}! <a class="btn red lighten-2" href="{{ url_for('logout') }}">Logout</a>
+        <div class="row" style="margin-bottom: 50px;padding: 10px 10px 10px 10px">
+            <div class="col s9"><span style="font-size: 16px">Hi !<br> {{ current_user.first_name }} {{ current_user.last_name }}</span></div>
+            <div class="col s3"><a style="margin-top: 7px" class="btn blue right" href="{{ url_for('logout') }}">Logout</a></div>
+        </div>
+        
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            {{ form.name.label(class="form-control-label") }}
+                {% if form.name.errors %}
+                    {{form.name(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.name(class="form-control form-control-lg") }}
+                {% endif %}
+            {{ form.submit(class="btn btn-outline-info orange",style="width:100%") }}
+        </form>
+        <!-- Modal Structure -->
+        <div id="modal5" class="modal">
+            <div class="modal-content">
+                <p style="font-size: 16px">ขั้นตอนการใช้งาน</p>
+                <p style="font-size: 16px">1. ใส่ชื่อกล่องที่คุณต้องการใช้งาน</p>
+                <div class="center hide-on-med-and-down" style="margin: 0 0 0 0"><img src="{{url_for('static', filename='home1.png')}}" width="60%"/></div>
+                <div class="center hide-on-large-only" style="margin: 0 0 0 0"><img src="{{url_for('static', filename='home1.png')}}" width="100%"/></div>
+                <p style="font-size: 16px">2. สมัครเลือกแพ็กเก็ตที่คุณต้องการ</p>
+                <div class="center hide-on-med-and-down" style="margin: 0 0 0 0"><img src="{{url_for('static', filename='home2.png')}}" width="60%"/></div>
+                <div class="center hide-on-large-only" style="margin: 0 0 0 0"><img src="{{url_for('static', filename='home2.png')}}" width="100%"/></div>
+                <p style="font-size: 16px">3. ใช้งานระบบ</p>
+            </div>
+        </div>
+        
     {% endif %}
+{% endblock %}
+{% block script %}
+<script>
+     $(document).ready(function(){
+        $('.modal').modal();
+    });
+</script>
 {% endblock %}

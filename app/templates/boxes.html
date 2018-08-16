@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% block content %}
+    <p style="font-size: 20px">{{box_name}} <span class="right">ถูกจองโดย {{owner}}</span></p>
+    <p style="font-size: 13px">หมดอายุวันที่ <span class="right">{{end_date['day']}}/{{end_date['month']}}/{{end_date['year']}}  {{end_date['hour']}}:{{end_date['minute']}}:{{end_date['second']}}</span></p>
+    <p style="font-size: 13px">เหลืออีก<span id="getting-started" class="right"></span></p>
+    <hr>
+    {% if owner == current_user.username %}
+    <div class="row">
+        <div class="col s12" style="height: 80px; margin-bottom: 7px">
+            <a class="white-text" href="#" style="width: 100%;">
+                <div class="orange darken-3 center waves-effect waves-light z-depth-2" style="height: 80px; width: 100%; padding: 15px; border-radius: 10px">
+                    <p style="margin: 0 0 0 0; font-size: 30px;">Open Box</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col s12" style="height: 80px; margin-bottom: 7px">
+            <a class="white-text modal-trigger" href="#modal1" style="width: 100%;">
+                <div class="orange center waves-effect waves-light z-depth-2" style="height: 80px; width: 100%; padding: 15px; border-radius: 10px">
+                    <p style="margin: 0 0 0 0; font-size: 30px;">Add Post code</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col s12" style="height: 80px; margin-bottom: 15px">
+            <a class="white-text modal-trigger" href="#modal2" style="width: 100%;">
+                <div class="orange lighten-3 center waves-effect waves-light z-depth-2" style="height: 80px; width: 100%; padding: 15px; border-radius: 10px">
+                    <p style="margin: 0 0 0 0; font-size: 30px;">Your Post Code</p>
+                </div>
+            </a>
+        </div>
+        <form method="POST" action="{{ url_for('box',box_name=box_name) }}">
+            <div id="modal1" class="modal">
+                <div class="modal-content">
+                    {{ form.hidden_tag() }}
+                    <p style="font-size: 20px">Enter your password</p>
+                        {{ form.password.label(class="form-control-label") }}
+                        {% if form.password.errors %}
+                            {{form.password(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.password(class="form-control form-control-lg") }}
+                        {% endif %}
+                        {{ form.submit(class="btn btn-outline-info blue",style="width:100%") }}
+                </div>
+            </div>
+        </form>
+        {% if password %}
+            <div id="modal2" class="modal">
+                <div class="modal-content">
+                    <ul>
+                        {% for pw in password %}
+                            {% if pw != 1 %}
+                                <li>{{pw}}</li>
+                            {% endif %}
+        
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+        {% if thumnail %}
+            <img src={{thumnail}} width="100%">
+        {% endif %}
+    {% endif %}
+    <a class="btn blue-grey darken-3" style="width: 100%" href="{{ url_for('home') }}">Back</a>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        $(document).ready(function(){
+            $('.modal').modal();
+        });
+    </script>
+    <script src="{{url_for('static', filename='jquery.countdown.min.js')}}"></script>
+    <script type="text/javascript">
+        $("#getting-started")
+        .countdown("{{end_date['year']}}/{{end_date['month']}}/{{end_date['day']}} {{end_date['hour']}}:{{end_date['minute']}}:{{end_date['second']}}", function(event) {
+          $(this).text(
+            event.strftime('%D วัน %H ชั่วโมง %M นาที %S วินาที')
+          );
+        });
+      </script>
+{% endblock %}

@@ -1,11 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
-
-    <div class="content-section">
-        <form method="POST" action="">
+    <!-- <p class="center" style="font-size: 30px;margin: 0 0 0 0">Magic BOX</p> -->
+    <div class="center" style="margin: 0 0 0 0"><img src="{{url_for('static', filename='012.png')}}" width="50%"/></div>
+    <div class="content-section" >
+        <form method="POST" action="" >
             {{ form.hidden_tag() }} <!-- addCSRF TOKEN -->
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Log In</legend>
+            <fieldset class="form-group" style="width: 100%">
+                <legend class="border-bottom mb-4" style="font-size: 15px">Log In</legend>
                 <div class="form-group">
                     {{ form.username.label(class="form-control-label") }}
                     {% if form.username.errors %}
@@ -32,18 +33,15 @@
                         {{ form.password(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                <div class="form-group" style="margin-top: 5px">
+                    {{ form.submit(class="btn btn-outline-info orange",style="width:100%") }}
+                </div>
             </fieldset>
-            <div class="form-group" style="margin-top: 5px">
-                {{ form.submit(class="btn btn-outline-info") }}
-            </div>
-            <small class="text-muted ml-2">
-                <a href="#">Forgot Password?</a>
-            </small>
         </form>
     </div>
     <div class="border-top pt-3">
         <small class="text-muted">
-           Need An Account? <a class="ml-2" href="{{url_for('register')}}">Sign Up Now</a>
+           Need An Account? <a class="blue-text text-darken-2" href="{{url_for('register')}}">Sign Up Now</a>
         </small>
     </div>
 {% endblock %}
