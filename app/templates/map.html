@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Custom Markers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+     <!-- Compiled and minified CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+
+     <!-- Compiled and minified JavaScript -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 94%;
+        width: 100%;
+      }
+      .modal{
+        position: absolute
+      }
+    </style>
+    
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="floating-panel">
+      <a class="btn blue-grey darken-3" style="width: 100%" href="{{ url_for('home') }}">Back</a>
+    </div>
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <h4>Modal Header</h4>
+        <p>A bunch of text</p>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyCk9qv1iJZp16IXL5Uit6oJL0l39P2WwTE",
+        authDomain: "southern-iot-box.firebaseapp.com",
+        databaseURL: "https://southern-iot-box.firebaseio.com",
+        projectId: "southern-iot-box",
+        storageBucket: "southern-iot-box.appspot.com",
+        messagingSenderId: "937282602359"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 16,
+          center: new google.maps.LatLng(7.007278, 100.502278),
+          mapTypeId: 'roadmap'
+        });
+        infoWindow = new google.maps.InfoWindow;
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent("You're here");
+            infoWindow.open(map);
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+        var locations_features = [{
+          position:null
+        }]
+        firebase.database().ref('/locations').once('value').then((snapshot)=>{
+          var locates = snapshot.val()
+          for(i in locates){
+            let locate = locates[i]
+            let contentString = `<p>small:</p>`
+            let myFirstPromise = new Promise((resolve, reject) => {
+                locate['boxs'].forEach((l)=>{
+                firebase.database().ref('/boxs/'+l).once('value').then((snapshot)=>{
+                  var box = snapshot.val()
+                  if (box['owner'] == "no"){
+                    // console.log(l)
+                    let box_st = '/box/'+l
+                    // console.log(`<a class="btn small" href="`+box_st+`">`)
+                    contentString+=`<a class="btn small" href="`+box_st+`">`+l+`</a>`
+                  }
+                  else{
+                    contentString+=`<a class="btn small disabled">`+l+`</a>`
+                  }
+                })
+              })
+              setTimeout(function(){
+                resolve("Success!"); // Yay! Everything went well!
+              }, 250);
+            });
+            myFirstPromise.then((successMessage) => {
+              let lat = Number(locate['lat'])
+              let long = Number(locate['long'])
+              let infowindow_modal = new google.maps.InfoWindow({
+                content: contentString,
+                maxWidth: 200
+              });
+              let marker = new google.maps.Marker({
+                position: new google.maps.LatLng(lat, long),
+                icon: "https://firebasestorage.googleapis.com/v0/b/southern-iot-box.appspot.com/o/logo.png?alt=media&token=d668e853-7062-4501-939b-37ae3b60466d",
+                map: map,
+                title: locate['label']
+              });
+              marker.addListener('click', function() {
+                infowindow_modal.open(map, marker);
+              });
+              // console.log("Yay! " + successMessage);
+            });
+            
+          }
+        });        
+      }
+    </script>
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSy8IpIIWRDsFT0j-sLOt5Ga13GSFmooo&callback=initMap">
+    </script>
+  </body>
+</html>

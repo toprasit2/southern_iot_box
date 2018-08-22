@@ -31,6 +31,8 @@ app.config['MQTT_TLS_ENABLED'] = False  # set TLS to disabled for testing purpos
 mqtt = Mqtt(app)
 mqtt.subscribe('open_box')
 mqtt.subscribe('is_reserved')
+mqtt.subscribe('is_free')
 mqtt.subscribe('is_opened')
+mqtt.subscribe('is_closed')
 
 from app import routes

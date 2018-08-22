@@ -77,7 +77,7 @@
                 <ul>
                     {% for ms in message %}
                         {% if ms != 1 %}
-                            <li style="display: inline-block"><div class="center"><span class="left">{{ms.time.day}}/{{ms.time.month}}/{{ms.time.year}}  {{ms.time.hour}}:{{ms.time.minute}}:{{ms.time.second}}</span>{{ms.sender}}<span class="right">call:{{ms.contact}}</span></div></li>
+                            <li style="display: inline-block"><div class="center"><span class="left">{{ms.time.day}}/{{ms.time.month}}/{{ms.time.year}}  {{ms.time.hour}}:{{ms.time.minute}}:{{ms.time.second}}</span>{{ms.sender}}{% if ms.contact != 1 %}<span class="right">call:{{ms.contact}}</span>{% endif %}</div></li>
                         {% endif %}
     
                     {% endfor %}
@@ -139,9 +139,11 @@
           messagingSenderId: "937282602359"
         };
         firebase.initializeApp(config);
+        var database = firebase.database();
       </script>
     <script src="{{url_for('static', filename='jquery.countdown.min.js')}}"></script>
     <script type="text/javascript">
+        
         $("#getting-started")
         .countdown("{{end_date['year']}}/{{end_date['month']}}/{{end_date['day']}} {{end_date['hour']}}:{{end_date['minute']}}:{{end_date['second']}}")
             .on('update.countdown', function(event) {
@@ -152,13 +154,13 @@
             .on('finish.countdown', function(event) {
                 var url = window.location.href
                 url = url.split('/')
-                var rootRef = firebase.database().ref();
-                var storesRef = rootRef.child('boxs/'+url[4]);
-                storesRef.set({
-                    owner:"no",
-                    status:"no",
-                    password: [1]
-                });
+                // var rootRef = firebase.database().ref();
+                // var storesRef = rootRef.child('boxs/'+url[4]);
+                // storesRef.set({
+                //     owner:"no",
+                //     status:"no",
+                //     password: [1]
+                // });
                 window.location.reload()
             });
       </script>

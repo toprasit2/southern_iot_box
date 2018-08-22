@@ -28,23 +28,22 @@
 </head>
 <body>
         <main role="main" class="container">
-                <div class="row">
-                    <div class="col l2"></div>
-                    <div class="col l12 xl8">
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                {% for category, message in messages %}
-                                    <ul id="flash_message" class="collection {{category}}">
-                                        <li class="collection-item {{category}}">{{ message }}</li>
-                                    </ul>
-                                {% endfor %}
-                            {% endif %}
-                        {% endwith %}
-                        {% block content %}{% endblock %}
-                    </div>
-                    <div class="col l2"></div>
+            <div class="row">
+                <div class="col s12 l12 xl2"></div>
+                <div class="col s12 l12 xl8">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <ul id="flash_message" class="collection {{category}}">
+                                    <li class="collection-item {{category}}">{{ message }}</li>
+                                </ul>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    {% block content %}{% endblock %}
                 </div>
-            </main>
+            </div>
+        </main>
     <!-- jQuery JS -->
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
     <!-- MaterializeCSS JS -->

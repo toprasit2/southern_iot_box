@@ -35,6 +35,10 @@ def add_date(day, month, year):
     }
     return d_dict
 
+@app.route("/map")
+@login_required
+def map():
+    return render_template("map.html", title='Map')
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
@@ -156,7 +160,7 @@ def reserve(box_name, number):
                     'password': [1],
                     'message': [1]
                 })
-        mqtt.publish('is_reserved', box_name+" red")
+        mqtt.publish('is_reserved', box_name)
         return redirect(url_for('box', box_name=box_name))
     else:
         return redirect(url_for('box', box_name=box_name))
@@ -226,8 +230,81 @@ def handle_mytopic(client, userdata, message):
 @app.route("/open/<box_name>", methods=['GET', 'POST'])
 def open(box_name):
     mqtt.publish('open_box', box_name)
+    box = get_box_from_firebase(box_name)
+    owner = box['owner']
+    message = box['message']
+    message.append({
+        'sender':owner,
+        'time':my_date_time(),
+        'contact':1
+    })
+    reserved_date = box['reserved_date']
+    end_date =  box['end_date']
+    username = box['username']
+    password = box['password']
+    push = firebase.put('/boxs', box_name, 
+            {   'owner': owner,
+                'username': username,
+                'status' : 'reserved',
+                'reserved_date': reserved_date,
+                'end_date' : end_date,
+                'password': password,
+                'message': message
+            })
+    #print(box_name)
     return redirect(url_for('box', box_name=box_name))
 
+@mqtt.on_topic('is_opened')
+def handle_mytopic(client, userdata, message):
+    box_name = message.payload.decode()
+    box = get_box_from_firebase(box_name)
+    message = box['message']
+    message.append({
+        'sender':'opened box',
+        'time':my_date_time(),
+        'contact':1
+    })
+    reserved_date = box['reserved_date']
+    end_date =  box['end_date']
+    owner = box['owner']
+    username = box['username']
+    password = box['password']
+    push = firebase.put('/boxs', box_name, 
+            {   'owner': owner,
+                'username': username,
+                'status' : 'reserved',
+                'reserved_date': reserved_date,
+                'end_date' : end_date,
+                'password': password,
+                'message': message
+            })
+    #print(box_name)
+
+@mqtt.on_topic('is_closed')
+def handle_mytopic(client, userdata, message):
+    box_name = message.payload.decode()
+    box = get_box_from_firebase(box_name)
+    message = box['message']
+    message.append({
+        'sender':'closed box',
+        'time':my_date_time(),
+        'contact':1
+    })
+    reserved_date = box['reserved_date']
+    end_date =  box['end_date']
+    owner = box['owner']
+    username = box['username']
+    password = box['password']
+    push = firebase.put('/boxs', box_name, 
+            {   'owner': owner,
+                'username': username,
+                'status' : 'reserved',
+                'reserved_date': reserved_date,
+                'end_date' : end_date,
+                'password': password,
+                'message': message
+            })
+    # print(box_name)
 import json
 @app.route("/api")
 def api():

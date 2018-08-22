@@ -37,16 +37,18 @@ def init():
         for i in results.each():
             data = i.val()
             if data['owner'] == 'no':
-                mqtt.publish('is_reserved', i.key()+" green")
+                pass
             else:
                 end_date = data['end_date']
                 d_ed = moment.date(end_date['year'],end_date['month'],end_date['day'],end_date['hour'],end_date['minute'],end_date['second'])
-                print(d_ed > dt)
-                if d_ed > dt:
-                    mqtt.publish('is_reserved', i.key()+" red")
+                #print(d_ed < dt)
+                if d_ed < dt:
+                    data = {"owner": 'no', "status": 'no', "password":[1], "message":[1]}
+                    db.child("boxs").child(i.key()).set(data)
+                    mqtt.publish('is_free', i.key())
                 else:   
-                    mqtt.publish('is_reserved', i.key()+" green")
-        time.sleep(5)
+                    pass
+        time.sleep(1)
         
 if __name__ == '__main__':
     # app.run(port=3134, debug=True)  #on local host

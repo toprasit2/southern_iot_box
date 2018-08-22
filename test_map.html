@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Custom Markers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+     <!-- Compiled and minified CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+
+     <!-- Compiled and minified JavaScript -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 94%;
+        width: 100%;
+      }
+      .modal{
+        position: absolute
+      }
+    </style>
+    
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="floating-panel">
+      <a class="btn blue-grey darken-3" style="width: 100%" href="{{ url_for('home') }}">Back</a>
+    </div>
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <h4>Modal Header</h4>
+        <p>A bunch of text</p>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 16,
+          center: new google.maps.LatLng(7.007278, 100.502278),
+          mapTypeId: 'roadmap'
+        });
+        infoWindow = new google.maps.InfoWindow;
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent("You're here");
+            infoWindow.open(map);
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+
+        var features = [
+          {
+            position: new google.maps.LatLng(7.007278, 100.502278),
+            type: 'red',
+            label: '0001'
+          },
+          {
+            position: new google.maps.LatLng(7.207278, 100.502278),
+            type: 'green',
+            label: '0002'
+          }
+        ];
+        
+        // Create markers.
+        features.forEach(function(feature) {
+          var contentString = `<p>small:</p>
+                  <a class="btn small disabled">0001</a>` +
+                  `<a class="btn small">0002</a>` +
+                  `<a class="btn small">0002</a>` +
+                  `<p>medium:</p>`+
+                  `<a class="btn small disabled">0003</a>` +
+                  `<a class="btn small">0004</a>` +
+                  `<p>large:</p>`+
+                  `<a class="btn small disabled">0005</a>`
+
+          var infowindow_modal = new google.maps.InfoWindow({
+            content: contentString,
+            maxWidth: 200
+          });
+          var marker = new google.maps.Marker({
+            position: feature.position,
+            icon: "https://firebasestorage.googleapis.com/v0/b/southern-iot-box.appspot.com/o/logo.png?alt=media&token=d668e853-7062-4501-939b-37ae3b60466d",
+            map: map,
+            title: feature.label
+          });
+          marker.addListener('click', function() {
+            infowindow_modal.open(map, marker);
+          });
+        });
+        
+      }
+    </script>
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSy8IpIIWRDsFT0j-sLOt5Ga13GSFmooo&callback=initMap">
+    </script>
+  </body>
+</html>
