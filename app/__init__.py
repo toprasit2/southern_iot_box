@@ -34,5 +34,4 @@ mqtt.subscribe('is_reserved')
 mqtt.subscribe('is_free')
 mqtt.subscribe('is_opened')
 mqtt.subscribe('is_closed')
-
 from app import routes

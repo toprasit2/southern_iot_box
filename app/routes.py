@@ -53,12 +53,17 @@ def home():
                 return redirect(url_for('home'))
 
             return redirect(url_for('box', box_name=box_name))
-        return render_template("home.html", title='Home', form=form)
+        historys = get_history_from_firebase(current_user.username)
+        return render_template("home.html", title='Home', form=form, historys=historys)
     else:
         return redirect(url_for('login'))
 
 def get_box_from_firebase(box_name):
         path = '/boxs/'+ box_name
+        return firebase.get(path, None)
+
+def get_history_from_firebase(username):
+        path = '/historys/'+ username
         return firebase.get(path, None)
 
 @app.route("/box/<box_name>", methods=['GET', 'POST'])
@@ -151,6 +156,8 @@ def reserve(box_name, number):
         end_date = add_date(day=0,month=0,year=1)
     box = get_box_from_firebase(box_name)
     if box['status'] == 'no':
+        # mqtt.publish('is_reserved', box_name)
+        mqtt.publish('status_box', "reserved")
         push = firebase.put('/boxs', box_name,
                 {   'owner': current_user.first_name+" "+current_user.last_name,
                     'username': current_user.username,
@@ -160,7 +167,14 @@ def reserve(box_name, number):
                     'password': [1],
                     'message': [1]
                 })
-        mqtt.publish('is_reserved', box_name)
+        historys = get_history_from_firebase(current_user.username)
+        box_names = historys['box_name']
+        box_names.append(box_name)
+        history = historys['history']
+        push2 = firebase.put('/historys', current_user.username,
+                {   'box_name':box_names,
+                    'history':history
+                })
         return redirect(url_for('box', box_name=box_name))
     else:
         return redirect(url_for('box', box_name=box_name))
@@ -187,6 +201,10 @@ def register():
                     'last_name' : form.last_name.data,
                     'created_date': my_date_time()
                 })
+            push2 = firebase.put('/historys', form.username.data,
+                {   'box_name':[1],
+                    'history':[1]
+                })    
             print("register success!!")
             flash(f'Account created for {form.username.data}!', 'green lighten-5') 
             return redirect(url_for('home'))
@@ -305,6 +323,7 @@ def handle_mytopic(client, userdata, message):
                 'message': message
             })
     # print(box_name)
+
 import json
 @app.route("/api")
 def api():

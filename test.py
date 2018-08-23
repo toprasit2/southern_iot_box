@@ -33,6 +33,8 @@ from datetime import datetime
 def init():
     while(1):
         results = db.child("boxs").get()
+        historys = db.child("historys").get()
+        
         dt = moment.now()
         for i in results.each():
             data = i.val()
@@ -43,9 +45,19 @@ def init():
                 d_ed = moment.date(end_date['year'],end_date['month'],end_date['day'],end_date['hour'],end_date['minute'],end_date['second'])
                 #print(d_ed < dt)
                 if d_ed < dt:
-                    data = {"owner": 'no', "status": 'no', "password":[1], "message":[1]}
-                    db.child("boxs").child(i.key()).set(data)
-                    mqtt.publish('is_free', i.key())
+                    # mqtt.publish('status_box', i.key())
+                    mqtt.publish('status_box', "free")
+                    data2 = {"owner": 'no', "status": 'no', "password":[1], "message":[1]}
+                    db.child("boxs").child(i.key()).set(data2)
+                    for history in historys.each():
+                        his = history.val()
+                        a = his['box_name']
+                        if i.key() in a:
+                            a.remove(i.key())
+                            data3 = {"box_name":a, "history":his['history']}
+                            owner = str(history.key())
+                            print(a, owner)
+                            db.child('historys').child(history.key()).set(data3)
                 else:   
                     pass
         time.sleep(1)

@@ -14,39 +14,39 @@
     {% if current_user.is_authenticated %}
         <div class="row" style="padding: 10px 10px 10px 10px; margin-bottom: 20px">
             <div class="col s9"><span style="font-size: 16px">Hi !<br> {{ current_user.first_name }} {{ current_user.last_name }}</span></div>
-            <div class="col s3"><a style="margin-top: 7px" class="btn blue right" href="{{ url_for('logout') }}">Logout</a></div>
+            <div class="col s3"><a style="margin-top: 7px" class="btn orange right" href="{{ url_for('logout') }}">Logout</a></div>
         </div>
-        <div class="row orange" style="padding: 0 0 0 0; border-radius: 5px 5px 0 0">
+        <div class="row amber accent-4 z-depth-3" style="padding: 0 0 0 0; border-radius: 5px 5px 0 0">
             <div class="col s12 " style="height: 16vh;">
-                <a class="white-text modal-trigger" href="#searching">
-                    <div class="orange waves-effect waves-light" style="height: 16vh; width: 100%;">
+                <a class="orange-text text-lighten-4 modal-trigger" href="#searching">
+                    <div class="waves-effect waves-light" style="height: 16vh; width: 100%;">
                         <p style="font-size: 28px">ค้นหาจากชื่อ<span class="right"><i style="font-size: 35px" class="small material-icons">search</i></span></p>
                     </div>
                 </a>
             </div>
         </div>
-        <div class="row red" style="padding: 0 0 0 0">
-            <div class="col s12 " style="height: 16vh;">
-                <a class="white-text" href="{{ url_for('map') }}">
-                    <div class="red waves-effect waves-light" style="height: 16vh; width: 100%;">
+        <div class="row amber accent-4 z-depth-3" style="padding: 0 0 0 0">
+            <div class="col s12" style="height: 16vh;">
+                <a class="orange-text text-lighten-4" href="{{ url_for('map') }}">
+                    <div class="waves-effect waves-light" style="height: 16vh; width: 100%;">
                         <p style="font-size: 28px">กล่องใกล้ๆฉัน <span class="right"><i style="font-size: 35px" class="small material-icons">map</i></span></p>
                     </div>
                 </a>
             </div>
         </div>
-        <div class="row pink" style="padding: 0 0 0 0;" >
+        <div class="row amber accent-4 z-depth-3" style="padding: 0 0 0 0;" >
             <div class="col s12 " style="height: 16vh;">
-                <a class="white-text" href="#">
-                    <div class="pink waves-effect waves-light" style="height: 16vh; width: 100%;">
+                <a class="orange-text text-lighten-4 modal-trigger" href="#my_box">
+                    <div class="waves-effect waves-light" style="height: 16vh; width: 100%;">
                         <p style="font-size: 28px">กล่องของฉัน <span class="right"><i style="font-size: 35px" class="small material-icons">class</i></span></p>
                     </div>
                 </a>
             </div>
         </div>
-        <div class="row indigo" style="padding: 0 0 0 0; border-radius: 0 0 5px 5px" >
+        <div class="row amber accent-4 z-depth-3" style="padding: 0 0 0 0; border-radius: 0 0 5px 5px" >
                 <div class="col s12 " style="height: 16vh;">
-                    <a class="white-text" href="#">
-                        <div class="indigo waves-effect waves-light" style="height: 16vh; width: 100%;">
+                    <a class="orange-text text-lighten-4" href="#">
+                        <div class="waves-effect waves-light" style="height: 16vh; width: 100%;">
                             <p style="font-size: 28px">ประวัติการจอง<span class="right"><i style="font-size: 35px" class="small material-icons">history</i></span></p>
                         </div>
                     </a>
@@ -72,7 +72,15 @@
                 </div>
             </div>
         </form>
-
+        <div id="my_box" class="modal">
+            <div class="modal-content">
+               {% for box in historys['box_name'] %}
+                {% if box != 1 %}
+                <a href="{{ url_for('box', box_name=box) }}" class="btn">{{box}}</a>
+                {% endif %}
+               {% endfor %}
+            </div>
+        </div>
         <div id="information" class="modal">
             <div class="modal-content">
                 <p style="font-size: 16px">ขั้นตอนการใช้งาน</p>

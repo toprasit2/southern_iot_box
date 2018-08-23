@@ -73,11 +73,11 @@
     {% endif %}
     {% if message %}
         <div id="modal4" class="modal">
-            <div class="modal-content">
+            <div class="modal-content" style="width: 250px">
                 <ul>
                     {% for ms in message %}
                         {% if ms != 1 %}
-                            <li style="display: inline-block"><div class="center"><span class="left">{{ms.time.day}}/{{ms.time.month}}/{{ms.time.year}}  {{ms.time.hour}}:{{ms.time.minute}}:{{ms.time.second}}</span>{{ms.sender}}{% if ms.contact != 1 %}<span class="right">call:{{ms.contact}}</span>{% endif %}</div></li>
+                            <li style="display: block; width: 250px"><span class="left">{{ms.time.day}}/{{ms.time.month}}/{{ms.time.year}}  {{ms.time.hour}}:{{ms.time.minute}}:{{ms.time.second}}</span><br>{{ms.sender}}{% if ms.contact != 1 %}<span class="right">call:{{ms.contact}}</span>{% endif %}</li>
                         {% endif %}
     
                     {% endfor %}
